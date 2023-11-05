@@ -15,11 +15,11 @@ function getHtml({
   const escapedClass = escapeHtml(className);
 
   return `<div class="code-block-container">${
-    fileName
-      ? `<div class="code-block-filename-container"><span class="code-block-filename">${escapeHtml(
-          fileName
-        )}</span></div>`
-      : ''
+      fileName
+          ? `<div class="code-block-filename-container"><span class="code-block-filename">${escapeHtml(
+              fileName
+          )}</span></div>`
+          : ''
   }<pre class="${escapedClass}"><code class="${escapedClass}">${content}</code></pre></div>`;
 }
 
@@ -95,6 +95,18 @@ export function mdRendererFence(md: MarkdownIt, options?: MarkdownOptions) {
     const [tokens, idx] = args;
     const { info, content } = tokens[idx];
     const { langName, fileName, hasDiff } = parseInfo(info);
+
+    if (langName === 'ictscr') {
+      const generator = options?.customEmbed?.ictscr;
+      // generator が(上書きされて)定義されてない場合はそのまま出力する
+      return generator ? generator(content.trim(), options) : content;
+    }
+
+    if (langName === 'ictscc') {
+      const generator = options?.customEmbed?.ictscc;
+      // generator が(上書きされて)定義されてない場合はそのまま出力する
+      return generator ? generator(content.trim(), options) : content;
+    }
 
     if (langName === 'mermaid') {
       const generator = options?.customEmbed?.mermaid;

@@ -41,6 +41,8 @@ const tags = [
   'thead',
   'tr',
   'ul',
+  'fieldset',
+  'label',
 ];
 
 const attributes = {
@@ -78,7 +80,7 @@ const attributes = {
     'width',
   ],
   img: ['alt', 'class', 'height', 'loading', 'src', 'title', 'width'],
-  input: ['checked', 'class', 'type'],
+  input: ['checked', 'class', 'type', 'value', 'id', 'name'],
   li: ['class', 'id'],
   ol: ['class', 'start'],
   p: [],
@@ -105,6 +107,7 @@ const attributes = {
   thead: [],
   tr: [],
   ul: ['class'],
+  label: ['for', 'class'],
 };
 
 export const sanitize = (html: string) =>

@@ -21,25 +21,27 @@ import {
 
 /* 埋め込み要素の種別 */
 export type EmbedType =
-  | 'youtube'
-  | 'slideshare'
-  | 'speakerdeck'
-  | 'jsfiddle'
-  | 'codepen'
-  | 'codesandbox'
-  | 'stackblitz'
-  | 'tweet'
-  | 'blueprintue'
-  | 'figma'
-  | 'card'
-  | 'gist'
-  | 'github'
-  | 'mermaid';
+    | 'youtube'
+    | 'slideshare'
+    | 'speakerdeck'
+    | 'jsfiddle'
+    | 'codepen'
+    | 'codesandbox'
+    | 'stackblitz'
+    | 'tweet'
+    | 'blueprintue'
+    | 'figma'
+    | 'ictscr'
+    | 'ictscc'
+    | 'card'
+    | 'gist'
+    | 'github'
+    | 'mermaid';
 
 /** embedサーバーで表示する埋め込み要素の種別 */
 export type EmbedServerType = Extract<
-  EmbedType,
-  'tweet' | 'card' | 'mermaid' | 'github' | 'gist'
+    EmbedType,
+    'tweet' | 'card' | 'mermaid' | 'github' | 'gist' | 'ictscr' | 'ictscc'
 >;
 
 /** 埋め込み要素のHTMLを生成する関数 */
@@ -66,7 +68,7 @@ export const embedGenerators: Readonly<EmbedGeneratorList> = {
       return 'Slide Shareのkeyが不正です';
     }
     return `<span class="embed-block embed-slideshare"><iframe src="https://www.slideshare.net/slideshow/embed_code/key/${escapeHtml(
-      key
+        key
     )}" scrolling="no" allowfullscreen loading="lazy"></iframe></span>`;
   },
   speakerdeck(key) {
@@ -74,7 +76,7 @@ export const embedGenerators: Readonly<EmbedGeneratorList> = {
       return 'Speaker Deckのkeyが不正です';
     }
     return `<span class="embed-block embed-speakerdeck"><iframe src="https://speakerdeck.com/player/${escapeHtml(
-      key
+        key
     )}" scrolling="no" allowfullscreen allow="encrypted-media" loading="lazy"></iframe></span>`;
   },
   jsfiddle(str) {
@@ -88,7 +90,7 @@ export const embedGenerators: Readonly<EmbedGeneratorList> = {
       url = url.endsWith('/') ? `${url}embedded/` : `${url}/embedded/`;
     }
     return `<span class="embed-block embed-jsfiddle"><iframe src="${sanitizeEmbedToken(
-      url
+        url
     )}" scrolling="no" frameborder="no" loading="lazy"></iframe></span>`;
   },
   codepen(str) {
@@ -98,7 +100,7 @@ export const embedGenerators: Readonly<EmbedGeneratorList> = {
     const url = new URL(str.replace('/pen/', '/embed/'));
     url.searchParams.set('embed-version', '2');
     return `<span class="embed-block embed-codepen"><iframe src="${sanitizeEmbedToken(
-      url.toString()
+        url.toString()
     )}" scrolling="no" frameborder="no" loading="lazy"></iframe></span>`;
   },
   codesandbox(str) {
@@ -106,7 +108,7 @@ export const embedGenerators: Readonly<EmbedGeneratorList> = {
       return '「https://codesandbox.io/embed/」から始まる正しいURLを入力してください';
     }
     return `<span class="embed-block embed-codesandbox"><iframe src="${sanitizeEmbedToken(
-      str
+        str
     )}" style="width:100%;height:500px;border:none;overflow:hidden;" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking" loading="lazy" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"></iframe></span>`;
   },
   stackblitz(str) {
@@ -114,22 +116,34 @@ export const embedGenerators: Readonly<EmbedGeneratorList> = {
       return 'StackBlitzのembed用のURLを指定してください';
     }
     return `<span class="embed-block embed-stackblitz"><iframe src="${sanitizeEmbedToken(
-      str
+        str
     )}" scrolling="no" frameborder="no" loading="lazy"></iframe></span>`;
   },
   blueprintue(str) {
     if (!isBlueprintUEUrl(str))
       return '「https://blueprintue.com/render/」から始まる正しいURLを指定してください';
     return `<span class="embed-block embed-blueprintue"><iframe src="${sanitizeEmbedToken(
-      str
+        str
     )}" width="100%" style="aspect-ratio: 16/9" scrolling="no" frameborder="no" loading="lazy" allowfullscreen></iframe></span>`;
   },
   figma(str: string) {
     if (!isFigmaUrl(str))
       return 'ファイルまたはプロトタイプのFigma URLを指定してください';
     return `<span class="embed-block embed-figma"><iframe src="https://www.figma.com/embed?embed_host=zenn&url=${sanitizeEmbedToken(
-      str
+        str
     )}" width="100%" style="aspect-ratio: 16/9" scrolling="no" frameborder="no" loading="lazy" allowfullscreen></iframe></span>`;
+  },
+  ictscr(str: string) {
+    // エスケープ処理しておく
+    const src = str.replace(/>/g, '&gt;');
+
+    return `<div class="code-block-container"><pre><code>test</code></pre></div>`;
+  },
+  ictscc(str: string) {
+    // エスケープ処理しておく
+    const src = str.replace(/>/g, '&gt;');
+
+    return `<div class="code-block-container"><pre><code>test</code></pre></div>`;
   },
 
   // 以下は埋め込みサーバーが絡む要素。
@@ -172,6 +186,8 @@ export const embedGenerators: Readonly<EmbedGeneratorList> = {
     return `<a href="${str}" rel="noreferrer noopener nofollow" target="_blank">${str}</a>`;
   },
   mermaid(str, options) {
+    console.log('mermaid')
+
     if (options?.embedOrigin)
       return generateEmbedServerIframe('mermaid', str, options.embedOrigin);
 
